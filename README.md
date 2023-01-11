@@ -1,6 +1,8 @@
 # onnx2keras
 
-ONNX to Keras deep neural network converter. 
+`pip install -e .`
+
+ONNX to Keras deep neural network converter.
 
 [![GitHub License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-2.7%2C3.6-lightgrey.svg)](https://github.com/gmalivenko/onnx2keras)
@@ -99,7 +101,7 @@ output = model(input_var)
 
 # Convert the model!
 k_model = \
-    pytorch_to_keras(model, input_var, (3, 224, 224), 
+    pytorch_to_keras(model, input_var, (3, 224, 224),
                      verbose=True, name_policy='short',
                      change_ordering=True)
 

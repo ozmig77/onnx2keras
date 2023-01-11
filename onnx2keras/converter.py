@@ -52,7 +52,6 @@ def onnx_to_keras(onnx_model, input_names,
     keras_fmt = keras.backend.image_data_format()
     keras.backend.set_image_data_format('channels_first')
 
-    print("hi", verbose)
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
     else:
