@@ -52,8 +52,11 @@ def onnx_to_keras(onnx_model, input_names,
     keras_fmt = keras.backend.image_data_format()
     keras.backend.set_image_data_format('channels_first')
 
+    print("hi", verbose)
     if verbose:
         logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.ERROR)
 
     logger = logging.getLogger('onnx2keras')
 
@@ -222,13 +225,14 @@ def onnx_to_keras(onnx_model, input_names,
                         ]), -1
                     ))
             if layer['config'] and 'target_shape' in layer['config']:
-                if len(list(layer['config']['target_shape'][1:][:])) > 0:
+                target_shape_list = list(layer['config']['target_shape'])
+                if len(target_shape_list) > 1:
+                    start_idx = max(1, len(target_shape_list)-2)
                     layer['config']['target_shape'] = \
                         tuple(np.reshape(np.array(
-                                list(layer['config']['target_shape'][1:]) +
-                                [layer['config']['target_shape'][0]]
+                                target_shape_list[start_idx:] +
+                                target_shape_list[:start_idx]
                             ), -1),)
-
             if layer['config'] and 'data_format' in layer['config']:
                 layer['config']['data_format'] = 'channels_last'
             if layer['config'] and 'axis' in layer['config']:
@@ -237,6 +241,9 @@ def onnx_to_keras(onnx_model, input_names,
                 if isinstance(axis, (tuple, list)):
                     axis = axis[0]
                 layer['config']['axis'] = change_ord_axes_map.get(axis, layer['config']['axis'])
+            if layer['class_name'] == 'Permute':
+                if(len(layer['config']['dims']) == 4):
+                    layer['config']['dims'] = (1,2,4,3) ## CUSTOM CHANGES
 
         for layer in conf['layers']:
             if 'function' in layer['config'] and layer['config']['function'][1] is not None:
